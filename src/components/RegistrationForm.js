@@ -1,28 +1,84 @@
-import React from 'react';
-//import logo from './logo.svg';
+import React, { Component } from 'react';
 import '../css/form.css';
 
-function RegistrationForm() {
-  return (
 
-    <form class="splash-container">
+class RegistrationForm extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {username: '',password:'',cpassword:'',error:false,msg:false};
+
+    this.handleChange = this.handleChange.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
+  }
+
+  handleChange(event) {
+    const target = event.target;
+    const value = target.type === 'checkbox' ? target.checked : target.value;
+    const name = target.name;
+
+
+    this.setState({
+      [name]: value
+    });
+  }
+
+  handleSubmit(event) {
+
+    //Validations
+    if(this.state.username.length==0){
+      this.setState({error:"Please enter your Email"});
+      return;
+    } else if(this.state.password.length==0){
+      this.setState({error:"Please enter your password"});
+      return;
+    }else if(this.state.password != this.state.cpassword ){
+      this.setState({error:"Password and confirmed password doesn't match"});
+      return;
+    }
+
+    //calling register API
+    fetch("http://localhost:8080/register", {
+          method : 'POST',
+          headers: {
+          'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ 'username': this.state.username,'password':this.state.password }),
+
+      },).then(res => res.json())
+      .then((data) => {
+        //alert(data);
+        if(data.isSuccess){
+          this.setState({error:false});
+          this.setState({msg:true});
+        }else{
+          this.setState({error:data.msg});
+        }
+      });
+  }
+
+  render() {
+    return (
+
+    <div class="splash-container">
         <div class="card">
             <div class="card-header">
                 <h3 class="mb-1">Registration Form</h3>
                 <p>Please enter your information.</p>
             </div>
             <div class="card-body">
+            {this.state.msg && <><medium style={{ color: 'green' }}>You have successfully registered. Please <a href="/" class="text-secondary">Login Here.</a></medium><br /></>}
                 <div class="form-group">
-                    <input class="form-control form-control-lg" type="email" name="email" required="" placeholder="E-mail" autocomplete="off"/>
+                    <input class="form-control form-control-lg" type="email" value={this.state.username} onChange={this.handleChange} name="username" required="" placeholder="E-mail" autocomplete="off"/>
                 </div>
                 <div class="form-group">
-                    <input class="form-control form-control-lg" id="pass1" type="password" required="" placeholder="Password"/>
+                    <input class="form-control form-control-lg" id="pass1" type="password" value={this.state.password} onChange={this.handleChange} name="password" required="" placeholder="Password"/>
                 </div>
                 <div class="form-group">
-                    <input class="form-control form-control-lg" required="" placeholder="Confirm"/>
+                    <input class="form-control form-control-lg" id="pass2" type="password" value={this.state.cpassword} onChange={this.handleChange} name="cpassword" required="" placeholder="Confirm Password"/>
                 </div>
+                {this.state.error && <><medium style={{ color: 'red' }}>{this.state.error}</medium><br /></>}
                 <div class="form-group pt-2">
-                    <button class="btn btn-block btn-primary" type="submit">Register My Account</button>
+                    <button class="btn btn-block btn-primary" onClick={this.handleSubmit}>Register My Account</button>
                 </div>
                 <div class="form-group">
                     <label class="custom-control custom-checkbox">
@@ -32,12 +88,13 @@ function RegistrationForm() {
 
             </div>
             <div class="card-footer bg-white">
-                <p>Already member? <a href="#" class="text-secondary">Login Here.</a></p>
+                <p>Already member? <a href="/" class="text-secondary">Login Here.</a></p>
             </div>
         </div>
-    </form>
+    </div>
 
   );
+}
 }
 
 export default RegistrationForm;

@@ -1,9 +1,70 @@
-import React from 'react';
-//import logo from './logo.svg';
-//import '../css/form.css';
+import React, { Component } from 'react';
+import '../css/form.css';
+import { removeUserSession,getToken } from '../utils/Common';
+import { withRouter } from "react-router-dom";
+import DataChart from './DataChart';
 
-function Dashboard() {
-  return (
+
+
+class Dashboard extends React.Component {
+
+  constructor(props) {
+    super(props);
+    this.state = {overallData:{},statewisedata:[],type:'confirmed'};
+    this.props = props;
+    this.handleChange = this.handleChange.bind(this);
+    this.handleLogout = this.handleLogout.bind(this);
+  }
+
+
+  componentDidMount() {
+
+            const api_url = process.env.REACT_APP_API;
+            const options = {
+              method: 'POST',
+                  headers: {
+                  'Content-Type': 'application/json',
+                  'Accept': 'application/json',
+                  'Authorization': getToken(),
+                  }
+              }
+
+            fetch(api_url+'/overalldata',options)
+            .then(res => res.json())
+            .then((data) => {
+              this.setState({ overallData: data });
+              console.log(data);
+            })
+            .catch(console.log);
+
+            fetch(api_url+'/statewisedata',options)
+            .then(res => res.json())
+            .then((data) => {
+              this.setState({ statewisedata : data });
+              console.log(data);
+            })
+            .catch(console.log);
+         }
+
+  handleChange(event) {
+    const target = event.target;
+    const value = target.type === 'checkbox' ? target.checked : target.value;
+    const name = target.name;
+
+
+    this.setState({
+      [name]: value
+    });
+  }
+
+  handleLogout(event) {
+    removeUserSession();
+    this.props.history.push('/dashboard');
+
+  }
+
+  render() {
+    return (
 
     <div className="dashboard-main-wrapper">
           {/* ============================================================== */}
@@ -17,7 +78,7 @@ function Dashboard() {
               </button>
               <div className="collapse navbar-collapse " id="navbarSupportedContent">
                 <div className="navbar-nav ml-auto navbar-right-top">
-                  <button className="btn btn-md btn-danger" style={{marginRight: '20px'}}>Logout</button>
+                  <button className="btn btn-md btn-danger" style={{marginRight: '20px'}} onClick={this.handleLogout}>Logout</button>
                 </div>
               </div>
             </nav>
@@ -55,7 +116,7 @@ function Dashboard() {
                         <div className="card-body">
                           <h5 className="text-muted">Confirmed</h5>
                           <div className="metric-value d-inline-block">
-                            <h1 className="mb-1">12099</h1>
+                            <h1 className="mb-1">{this.state.overallData.confirmed}</h1>
                           </div>
                           <div className="metric-label d-inline-block float-right text-success font-weight-bold">
                             <span className="text-success bg-success-light"></span><span className="ml-1">+5.86%</span>
@@ -69,7 +130,7 @@ function Dashboard() {
                         <div className="card-body">
                           <h5 className="text-muted">Active</h5>
                           <div className="metric-value d-inline-block">
-                            <h1 className="mb-1">1245</h1>
+                            <h1 className="mb-1">{this.state.overallData.active}</h1>
                           </div>
                           <div className="metric-label d-inline-block float-right text-success font-weight-bold">
                             <span className="text-success bg-success-light"></span><span className="ml-1">+10%</span>
@@ -83,7 +144,7 @@ function Dashboard() {
                         <div className="card-body">
                           <h5 className="text-muted">Recovered</h5>
                           <div className="metric-value d-inline-block">
-                            <h1 className="mb-1">13000</h1>
+                            <h1 className="mb-1">{this.state.overallData.recovered}</h1>
                           </div>
                           <div className="metric-label d-inline-block float-right text-success font-weight-bold">
                             <span className="text-success bg-success-light"><i className="fa fa-fw fa-arrow-up" /></span><span className="ml-1">+5%</span>
@@ -97,7 +158,7 @@ function Dashboard() {
                         <div className="card-body">
                           <h5 className="text-muted">Deceased</h5>
                           <div className="metric-value d-inline-block">
-                            <h1 className="mb-1">1340</h1>
+                            <h1 className="mb-1">{this.state.overallData.deceased}</h1>
                           </div>
                           <div className="metric-label d-inline-block float-right text-danger font-weight-bold">
                             <span className="text-danger bg-danger-light bg-danger-light "><i className="fa fa-fw fa-arrow-down" /></span><span className="ml-1">-4%</span>
@@ -112,7 +173,7 @@ function Dashboard() {
                     {/* ============================================================== */}
                     {/* recent orders  */}
                     {/* ============================================================== */}
-                    <div className="col-xl-9 col-lg-12 col-md-6 col-sm-12 col-12">
+                    <div className="col-xl-6 col-lg-12 col-md-6 col-sm-12 col-12">
                       <div className="card">
                         <h5 className="card-header">Statewise Summary</h5>
                         <div className="card-body p-0">
@@ -120,7 +181,7 @@ function Dashboard() {
                             <table className="table">
                               <thead className="bg-light">
                                 <tr className="border-0">
-                                  <th className="border-0">#</th>
+
                                   <th className="border-0">State</th>
                                   <th className="border-0">Confirmed</th>
                                   <th className="border-0">Active</th>
@@ -129,30 +190,17 @@ function Dashboard() {
                                 </tr>
                               </thead>
                               <tbody>
-                                <tr>
-                                  <td>1</td>
-                                  <td>Product #1 </td>
-                                  <td>id000001 </td>
-                                  <td>20</td>
-                                  <td>$80.00</td>
-                                  <td>27-08-2018 01:22:12</td>
-                                </tr>
-                                <tr>
-                                  <td>2</td>
-                                  <td>Product #1 </td>
-                                  <td>id000001 </td>
-                                  <td>20</td>
-                                  <td>$80.00</td>
-                                  <td>27-08-2018 01:22:12</td>
-                                </tr>
-                                <tr>
-                                  <td>3</td>
-                                  <td>Product #1 </td>
-                                  <td>id000001 </td>
-                                  <td>20</td>
-                                  <td>$80.00</td>
-                                  <td>27-08-2018 01:22:12</td>
-                                </tr>
+
+                                {this.state.statewisedata.map((data) => (
+                                  <tr>
+
+                                    <td>{data.state}</td>
+                                    <td>{data.confirmed}</td>
+                                    <td>{data.active}</td>
+                                    <td>{data.recovered}</td>
+                                    <td>{data.deceased}</td>
+                                  </tr>
+                                ))}
 
                               </tbody>
                             </table>
@@ -160,29 +208,25 @@ function Dashboard() {
                         </div>
                       </div>
                     </div>
-                    {/* ============================================================== */}
-                    {/* end recent orders  */}
-                    {/* ============================================================== */}
-                    {/* ============================================================== */}
-                    {/* customer acquistion  */}
-                    {/* ============================================================== */}
-                    <div className="col-xl-3 col-lg-6 col-md-6 col-sm-12 col-12">
+
+                    <div className="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
                       <div className="card">
-                        <h5 className="card-header">Graphs</h5>
+                        <h5 className="card-header">Pattern over time
+                        <select className="float-right" value={this.state.type} onChange={this.handleChange} name="type">
+                        <option value="confirmed">Confirmed</option>
+                        <option value="active">Active</option>
+                        <option value="recovered">Recovered</option>
+                        <option value="deceased">Deceased</option>
+                        </select></h5>
                         <div className="card-body">
-                          <div className="ct-chart ct-golden-section" style={{height: '354px'}} />
-                          <div className="text-center">
-                            <span className="legend-item mr-2">
-                              <span className="fa-xs text-primary mr-1 legend-tile"><i className="fa fa-fw fa-square-full" /></span>
-                              <span className="legend-text">Returning</span>
-                            </span>
-                            <span className="legend-item mr-2">
-                              <span className="fa-xs text-secondary mr-1 legend-tile"><i className="fa fa-fw fa-square-full" /></span>
-                              <span className="legend-text">First Time</span>
-                            </span>
-                          </div>
+                          { this.state.type=='confirmed' && <DataChart type={this.state.type}/>}
+                          { this.state.type=='active' && <DataChart type={this.state.type}/>}
+                          { this.state.type=='recovered' && <DataChart type={this.state.type}/>}
+                          { this.state.type=='deceased' && <DataChart type={this.state.type}/>}
                         </div>
                       </div>
+
+
                     </div>
                     {/* ============================================================== */}
                     {/* end customer acquistion  */}
@@ -199,7 +243,7 @@ function Dashboard() {
               <div className="container-fluid">
                 <div className="row">
                   <div className="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
-                    Copyright © 2018 Concept. All rights reserved. Dashboard by <a href="https://colorlib.com/wp/">Colorlib</a>.
+                    Copyright © 2020 . All rights reserved..
                   </div>
                   <div className="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
                     <div className="text-md-right footer-links d-none d-sm-block">
@@ -223,5 +267,6 @@ function Dashboard() {
 
   );
 }
+}
 
-export default Dashboard;
+export default withRouter(Dashboard);

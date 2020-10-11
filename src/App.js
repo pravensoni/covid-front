@@ -11,10 +11,24 @@ import RegistrationForm from './components/RegistrationForm';
 import Dashboard from './components/Dashboard';
 
 
-function App() {
-  return (
-    <Dashboard/>
+import { BrowserRouter as Router, Route, Link, Switch,Redirect } from 'react-router-dom';
+import { getUser } from './utils/Common';
+
+
+class App extends React.Component {
+
+  render() {
+    return (
+    <Router>
+            <Switch>
+            <Route exact path='/' component={()=>getUser()!=null?<Dashboard/>:<Redirect to="/login" />}></Route>
+            <Route exact path='/login' component={LoginForm}></Route>
+            <Route exact path='/register' component={RegistrationForm}></Route>
+            <Route exact path='/dashboard' component={()=>getUser()!=null?<Dashboard/>:<Redirect to="/login" />}></Route>
+            </Switch>
+       </Router>
   );
+}
 }
 
 export default App;
