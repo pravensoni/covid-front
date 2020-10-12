@@ -47,7 +47,7 @@ class DataChart extends React.Component {
   	componentDidMount(){
 
       const options = {
-        method: 'POST',
+        method: 'GET',
             headers: {
             'Content-Type': 'application/json',
             'Accept': 'application/json',

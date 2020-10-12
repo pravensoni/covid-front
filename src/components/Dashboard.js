@@ -21,7 +21,7 @@ class Dashboard extends React.Component {
 
             const api_url = process.env.REACT_APP_API;
             const options = {
-              method: 'POST',
+              method: 'GET',
                   headers: {
                   'Content-Type': 'application/json',
                   'Accept': 'application/json',
@@ -72,10 +72,7 @@ class Dashboard extends React.Component {
           {/* ============================================================== */}
           <div className="dashboard-header">
             <nav className="navbar navbar-expand-lg bg-white fixed-top">
-              <a className="navbar-brand" href="index.html">Covid-19 Dashboard</a>
-              <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                <span className="navbar-toggler-icon" />
-              </button>
+              <a className="navbar-brand" href="/">Covid-19 Dashboard</a>
               <div className="collapse navbar-collapse " id="navbarSupportedContent">
                 <div className="navbar-nav ml-auto navbar-right-top">
                   <button className="btn btn-md btn-danger" style={{marginRight: '20px'}} onClick={this.handleLogout}>Logout</button>
@@ -169,10 +166,7 @@ class Dashboard extends React.Component {
                   </div>
 
                   <div className="row">
-                    {/* ============================================================== */}
-                    {/* ============================================================== */}
-                    {/* recent orders  */}
-                    {/* ============================================================== */}
+
                     <div className="col-xl-6 col-lg-12 col-md-6 col-sm-12 col-12">
                       <div className="card">
                         <h5 className="card-header">Statewise Summary</h5>
@@ -228,11 +222,9 @@ class Dashboard extends React.Component {
 
 
                     </div>
-                    {/* ============================================================== */}
-                    {/* end customer acquistion  */}
-                    {/* ============================================================== */}
-                  </div>
 
+                  </div>
+<center><button className="btn btn-md btn-danger d-block d-sm-none" style={{marginRight: '20px',float:'center'}} onClick={this.handleLogout}>Logout</button></center>
                 </div>
               </div>
             </div>

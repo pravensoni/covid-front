@@ -5,7 +5,7 @@ import '../css/form.css';
 class RegistrationForm extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {username: '',password:'',cpassword:'',error:false,msg:false};
+    this.state = {username: '',password:'',cpassword:'',terms:false,error:false,msg:false};
 
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -34,10 +34,14 @@ class RegistrationForm extends React.Component {
     }else if(this.state.password != this.state.cpassword ){
       this.setState({error:"Password and confirmed password doesn't match"});
       return;
+    }else if(!this.state.terms){
+      this.setState({error:"Please check the box to agree to the terms and conditions"});
+      return;
     }
 
     //calling register API
-    fetch("http://localhost:8080/register", {
+    const api_url = process.env.REACT_APP_API;
+    fetch(api_url+"/register", {
           method : 'POST',
           headers: {
           'Content-Type': 'application/json',
@@ -50,6 +54,9 @@ class RegistrationForm extends React.Component {
         if(data.isSuccess){
           this.setState({error:false});
           this.setState({msg:true});
+          this.setState({username:''});
+          this.setState({password:''});
+          this.setState({cpassword:''});
         }else{
           this.setState({error:data.msg});
         }
@@ -82,7 +89,7 @@ class RegistrationForm extends React.Component {
                 </div>
                 <div class="form-group">
                     <label class="custom-control custom-checkbox">
-                        <input class="custom-control-input" type="checkbox"/><span class="custom-control-label">By creating an account, you agree the <a href="#">terms and conditions</a></span>
+                        <input class="custom-control-input" type="checkbox" value={this.state.terms} onChange={this.handleChange} name="terms" /><span class="custom-control-label">By creating an account, you agree to the <a href="#">terms and conditions</a></span>
                     </label>
                 </div>
 

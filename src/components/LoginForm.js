@@ -43,7 +43,7 @@ class LoginForm extends React.Component {
 
 
     //calling login API
-    let api_url = process.env.REACT_APP_API;
+    const api_url = process.env.REACT_APP_API;
     fetch(api_url+"/login", {
           method : 'POST',
           headers: {
